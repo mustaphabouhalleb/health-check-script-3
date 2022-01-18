@@ -1,16 +1,3 @@
-#!/bin/bash 
-##-----NOTE: This script requires root privileges, otherwise anyone could run the script -------##
-##---- as a sudo user who got root privileges. -------------------------------------------------##
-##----------- "sudo /bin/bash <ScriptName>" ----------------------------------------------------##
-
-AUTHOR="Mustapha Bouhalleb"
-CONTACT="mbouhall@redhat.com"
-DATE="19.01.2022"
-VERSION="1.0.3"
-
-# unset any variable which system may be using
-
-
 function sysstat {
 echo -e "
 #####################################################################
@@ -31,7 +18,21 @@ CPU Load - > Threshold < 1 Normal > 1 Caution , > 2 Unhealthy
 "
 MPSTAT=`which mpstat`
 MPSTAT=$?
-
+if [ $MPSTAT != 0 ]
+then
+        echo "Please install mpstat if possible!"
+        echo "On RHEL based systems:"
+        echo "yum install sysstat"
+else
+echo -e ""
+LSCPU=`which lscpu`
+LSCPU=$?
+if [ $LSCPU != 0 ]
+then
+        RESULT=$RESULT" lscpu required to producre acqurate results"
+else
+cpus=`lscpu | grep -e "^CPU(s):" | cut -f2 -d: | awk '{print $1}'`
+i=0
 while [ $i -lt $cpus ]
 do
         echo "CPU$i : `mpstat -P ALL | awk -v var=$i '{ if ($3 == var ) print $4 }' `"
@@ -120,8 +121,7 @@ Total\tUsed\tFree\t%Free
 
 ${TOTALSBC}GB\t${USEDSBC}GB\t${FREESBC}GB\t$(($FREESWAP * 100 / $TOTALSWAP  ))%
 "
-
-unset tecreset os architecture kernelrelease internalip externalip nameserver loadaverage
+nset tecreset os architecture kernelrelease internalip externalip nameserver loadaverage
 
 while getopts iv name
 do
@@ -141,6 +141,7 @@ scriptname=$(echo -e -n $wd/ && cat /tmp/scriptname)
 su -c "cp $scriptname /usr/bin/monitor" root && echo "Congratulations! Script Installed, now run monitor Command" || echo "Installation failed"
 }
 fi
+
 
 if [[ $# -eq 0 ]]
 then
@@ -264,7 +265,6 @@ fi
 shift $(($OPTIND -1))
 
 }
-
 FILENAME="health-`hostname`-`date +%y%m%d`-`date +%H%M`.txt"
 sysstat > $FILENAME
 echo -e "Reported file $FILENAME generated in current directory." $RESULT
