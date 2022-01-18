@@ -170,19 +170,6 @@ rm /tmp/who /tmp/ramcache /tmp/diskusage
 fi
 shift $(($OPTIND -1))
 
-
-MPSTAT=`which mpstat`
-MPSTAT=$?
-if [ $MPSTAT != 0 ]
-then
-        echo "Please install mpstat!"
-        echo "On Debian based systems:"
-        echo "sudo apt-get install sysstat"
-        echo "On RHEL based systems:"
-        echo "yum install sysstat"
-else
-echo -e ""
-
 LSCPU=`which lscpu`
 LSCPU=$?
 if [ $LSCPU != 0 ]
@@ -202,7 +189,6 @@ Load Average   : `uptime | awk -F'load average:' '{ print $2 }' | cut -f1 -d,`
 
 Heath Status : `uptime | awk -F'load average:' '{ print $2 }' | cut -f1 -d, | awk '{if ($1 > 2) print "Unhealthy"; else if ($1 > 1) print "Caution"; else print "Normal"}'`
 "
-fi
 echo -e "
 *********************************************************************
                              Process
