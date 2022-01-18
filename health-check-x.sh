@@ -104,24 +104,8 @@ USEDSBC=`echo "scale=2;if($USEDSWAP<1024 && $USEDSWAP > 0) print 0;$USEDSWAP/102
 FREESWAP=`free -m |  tail -1| awk '{print $4}'`
 FREESBC=`echo "scale=2;if($FREESWAP<1024 && $FREESWAP > 0) print 0;$FREESWAP/1024"|bc -l`
 
-echo -e "
-*********************************************************************
-                     Memory 
-*********************************************************************
 
-=> Physical Memory
-
-Total\tUsed\tFree\t%Free
-
-${TOTALBC}GB\t${USEDBC}GB \t${FREEBC}GB\t$(($FREEMEM * 100 / $TOTALMEM  ))%
-
-=> Swap Memory
-
-Total\tUsed\tFree\t%Free
-
-${TOTALSBC}GB\t${USEDSBC}GB\t${FREESBC}GB\t$(($FREESWAP * 100 / $TOTALSWAP  ))%
-"
-nset tecreset os architecture kernelrelease internalip externalip nameserver loadaverage
+unset tecreset os architecture kernelrelease internalip externalip nameserver loadaverage
 
 while getopts iv name
 do
