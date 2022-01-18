@@ -170,6 +170,19 @@ rm /tmp/who /tmp/ramcache /tmp/diskusage
 fi
 shift $(($OPTIND -1))
 
+
+MPSTAT=`which mpstat`
+MPSTAT=$?
+if [ $MPSTAT != 0 ]
+then
+        echo "Please install mpstat!"
+        echo "On Debian based systems:"
+        echo "sudo apt-get install sysstat"
+        echo "On RHEL based systems:"
+        echo "yum install sysstat"
+else
+echo -e ""
+
 LSCPU=`which lscpu`
 LSCPU=$?
 if [ $LSCPU != 0 ]
@@ -254,13 +267,4 @@ FREESBC=`echo "scale=2;if($FREESWAP<1024 && $FREESWAP > 0) print 0;$FREESWAP/102
 FILENAME="health-`hostname`-`date +%y%m%d`-`date +%H%M`.txt"
 sysstat > $FILENAME
 echo -e "Reported file $FILENAME generated in current directory." $RESULT
-if [ "$EMAIL" != '' ] 
-then
-        STATUS=`which mail`
-        if [ "$?" != 0 ] 
-        then
-                echo "The program 'mail' is currently not installed."
-        else
-                cat $FILENAME | mail -s "$FILENAME" $EMAIL
-        fi
-fi
+
