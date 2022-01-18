@@ -31,23 +31,7 @@ CPU Load - > Threshold < 1 Normal > 1 Caution , > 2 Unhealthy
 "
 MPSTAT=`which mpstat`
 MPSTAT=$?
-if [ $MPSTAT != 0 ]
-then
-        echo "Please install mpstat!"
-        echo "On Debian based systems:"
-        echo "sudo apt-get install sysstat"
-        echo "On RHEL based systems:"
-        echo "yum install sysstat"
-else
-echo -e ""
-LSCPU=`which lscpu`
-LSCPU=$?
-if [ $LSCPU != 0 ]
-then
-        RESULT=$RESULT" lscpu required to producre acqurate reults"
-else
-cpus=`lscpu | grep -e "^CPU(s):" | cut -f2 -d: | awk '{print $1}'`
-i=0
+
 while [ $i -lt $cpus ]
 do
         echo "CPU$i : `mpstat -P ALL | awk -v var=$i '{ if ($3 == var ) print $4 }' `"
@@ -136,20 +120,6 @@ Total\tUsed\tFree\t%Free
 
 ${TOTALSBC}GB\t${USEDSBC}GB\t${FREESBC}GB\t$(($FREESWAP * 100 / $TOTALSWAP  ))%
 "
-}
-FILENAME="health-`hostname`-`date +%y%m%d`-`date +%H%M`.txt"
-sysstat > $FILENAME
-echo -e "Reported file $FILENAME generated in current directory." $RESULT
-if [ "$EMAIL" != '' ] 
-then
-        STATUS=`which mail`
-        if [ "$?" != 0 ] 
-        then
-                echo "The program 'mail' is currently not installed."
-        else
-                cat $FILENAME | mail -s "$FILENAME" $EMAIL
-        fi
-fi
 
 unset tecreset os architecture kernelrelease internalip externalip nameserver loadaverage
 
@@ -292,3 +262,19 @@ rm /tmp/who /tmp/ramcache /tmp/diskusage
 }
 fi
 shift $(($OPTIND -1))
+
+}
+
+FILENAME="health-`hostname`-`date +%y%m%d`-`date +%H%M`.txt"
+sysstat > $FILENAME
+echo -e "Reported file $FILENAME generated in current directory." $RESULT
+if [ "$EMAIL" != '' ] 
+then
+        STATUS=`which mail`
+        if [ "$?" != 0 ] 
+        then
+                echo "The program 'mail' is currently not installed."
+        else
+                cat $FILENAME | mail -s "$FILENAME" $EMAIL
+        fi
+fi
