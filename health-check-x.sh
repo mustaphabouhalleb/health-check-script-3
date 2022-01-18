@@ -170,15 +170,6 @@ rm /tmp/who /tmp/ramcache /tmp/diskusage
 fi
 shift $(($OPTIND -1))
 
-MPSTAT=`which mpstat`
-MPSTAT=$?
-if [ $MPSTAT != 0 ]
-then
-        echo "Please install mpstat if possible!"
-        echo "On RHEL based systems:"
-        echo "yum install sysstat"
-else
-echo -e ""
 LSCPU=`which lscpu`
 LSCPU=$?
 if [ $LSCPU != 0 ]
